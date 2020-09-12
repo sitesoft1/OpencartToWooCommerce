@@ -7,9 +7,9 @@ set_time_limit(0);//snimaem ogranicheniya na vipolneniya skripta
 //define('IMAGE_PATH', __DIR__ . '/../image/data/xml');
 //define('IMAGE_PATH_TO_DATABASE', 'data/xml');
 
-define('WC_API_DOMAIN', 'https://sushisetboss.com');//PRODUCTION
-define('WC_API_CK', 'ck_5cab96ef0652aa1b744d07a094320fe1bc9b4e5f');
-define('WC_API_CS', 'cs_4ea0e9d3df2cc60a1a92f00aa3f29347aa804fb3');
+define('WC_API_DOMAIN', 'https://test.com');//PRODUCTION
+define('WC_API_CK', '');
+define('WC_API_CS', '');
 define('IMAGE_PATH', __DIR__ . '/../wp-content/uploads/xml');
 define('IMAGE_PATH_TO_DATABASE', 'xml');
 
