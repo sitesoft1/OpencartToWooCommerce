@@ -45,10 +45,19 @@ $woocommerce = new Client(
 
 //GET opencart data
 if(!empty($_POST)){
-    $product_id = $_POST['product_id'];
+    $name = $_POST['name'];
+    $price = $_POST['price'];
+    $description = $_POST['description'];
+    
+    
+    $rezult = $db->addProductFromOpenCart(
+        $name,
+        $price,
+        $description,
+        $woocommerce);
+    echo json_encode($rezult);
 }
 //GET opencart data END
 
 //$rezult = $db->getProduct($product_id, $woocommerce);
-$rezult = $db->addProductFromOpenCart($woocommerce);
-echo json_encode($rezult);
+

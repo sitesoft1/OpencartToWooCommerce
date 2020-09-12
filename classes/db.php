@@ -787,10 +787,10 @@ class Db
     
     public function addProductFromOpenCart(
        // $category,
-        //$name,
-       // $price,
+        $name,
+        $price,
        // $vendor_code,
-        //$description,
+        $description,
         //$images,
        // $attributes,
        // $type,
@@ -798,11 +798,11 @@ class Db
     {
     
         $data = [
-            'name' => 'Premium Quality',
+            'name' => (string) $name,
             'type' => 'simple',
-            'regular_price' => '21.99',
-            'description' => 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.',
-            'short_description' => 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
+            'regular_price' => (string) $price,
+            'description' => (string) $description,
+            'short_description' => (string) $description,
             'categories' => [
                 [
                     'id' => 43
