@@ -15,7 +15,7 @@ require_once __DIR__ . '/functions.php';
 require_once __DIR__ . '/config.php';
 //My classes END
 //Перехват завершения скрипта
-register_shutdown_function('shutdown');
+//register_shutdown_function('shutdown');
 
 //Composer
 require __DIR__ . '/vendor/autoload.php';
