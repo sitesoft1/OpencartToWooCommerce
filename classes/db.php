@@ -784,6 +784,61 @@ class Db
         return $short_description;
     }
     
+    
+    public function addProductFromOpenCart(
+       // $category,
+        //$name,
+       // $price,
+       // $vendor_code,
+        //$description,
+        //$images,
+       // $attributes,
+       // $type,
+        $woocommerce)
+    {
+    
+        $data = [
+            'name' => 'Premium Quality',
+            'type' => 'simple',
+            'regular_price' => '21.99',
+            'description' => 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.',
+            'short_description' => 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.',
+            'categories' => [
+                [
+                    'id' => 43
+                ]
+            ],
+            'images' => [
+                [
+                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
+                ],
+                [
+                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
+                ]
+            ]
+        ];
+        
+        try {
+            $product_rezult = $woocommerce->post('products', $data);
+        }
+        catch(Exception $e){
+            $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
+            $err = $info . $e->getMessage();
+            echo $err;
+            $this->errorLog($err);
+        }
+    
+        $product_id = $product_rezult->id;
+        if($product_id){
+            return $product_id;
+        }else{
+            return false;
+        }
+        
+    }
+    
+    
+    
     public function addProduct(
         $xml_id,
         $offer_category,

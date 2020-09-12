@@ -28,7 +28,7 @@ $db = new Db;
  * WooCommerce lib
  * https://packagist.org/packages/automattic/woocommerce
  * https://woocommerce.github.io/woocommerce-rest-api-docs/
- * 
+ *
  */
 
 //WooCommerce API CLIENT
@@ -43,9 +43,12 @@ $woocommerce = new Client(
 );
 //WooCommerce API CLIENT END
 
-//print_r($woocommerce);
+//GET opencart data
+if(!empty($_POST)){
+    $product_id = $_POST['product_id'];
+}
+//GET opencart data END
 
-//dump($woocommerce);
-
-$rez = $db->getProduct('7661', $woocommerce);
-dump($rez);
+//$rezult = $db->getProduct($product_id, $woocommerce);
+$rezult = $db->addProductFromOpenCart($woocommerce);
+echo json_encode($rezult);
