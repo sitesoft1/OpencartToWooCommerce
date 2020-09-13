@@ -789,7 +789,7 @@ class Db
        // $category,
         $wc_product_name,
         $wc_price,
-       // $vendor_code,
+        $wc_model,
         $wc_product_description,
         //$images,
        // $attributes,
@@ -803,6 +803,7 @@ class Db
             'regular_price' => (string) $wc_price,
             'description' => (string) $wc_product_description,
             'short_description' => (string) $wc_product_description,
+            'sku' => (string) $wc_model, //Unique identifier.
             'categories' => [
                 [
                     'id' => 43
