@@ -49,6 +49,7 @@ if(!empty($_POST)){
     $wc_price = $_POST['wc_price'];
     $wc_product_description = $_POST['wc_product_description'];
     $wc_model = $_POST['wc_model'];
+    $wc_product_images = $_POST['wc_product_images'];
     
     
     $rezult = $db->addProductFromOpenCart(
@@ -56,6 +57,7 @@ if(!empty($_POST)){
         $wc_price,
         $wc_model,
         $wc_product_description,
+        $wc_product_images,
         $woocommerce);
     echo json_encode($rezult);
 }

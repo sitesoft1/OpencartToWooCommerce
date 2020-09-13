@@ -791,11 +791,12 @@ class Db
         $wc_price,
         $wc_model,
         $wc_product_description,
-        //$images,
+        $wc_product_images,
        // $attributes,
        // $type,
         $woocommerce)
     {
+        $wc_product_images = $this->formImages($wc_product_images);
     
         $data = [
             'name' => (string) $wc_product_name,
@@ -809,14 +810,7 @@ class Db
                     'id' => 43
                 ]
             ],
-            'images' => [
-                [
-                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_front.jpg'
-                ],
-                [
-                    'src' => 'http://demo.woothemes.com/woocommerce/wp-content/uploads/sites/56/2013/06/T_2_back.jpg'
-                ]
-            ]
+            'images' => $wc_product_images
         ];
         
         try {
