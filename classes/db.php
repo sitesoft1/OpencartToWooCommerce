@@ -784,20 +784,36 @@ class Db
         return $short_description;
     }
     
+    public function formOcToWcCategories($wc_categories)
+    {
+        if(!empty($wc_categories)){
+            foreach ($wc_categories as $wc_category){
+                $categories[] = array(
+                    'id' => (int)$wc_category
+                );
+            }
+        }else{
+            $categories[] = array(
+                'id' => 22//uncategorized
+            );
+        }
+        return $categories;
+    }
     
-    public function addProductFromOpenCart(
-       // $category,
+    public function addOcToWcProduct(
         $wc_product_name,
         $wc_price,
         $wc_model,
         $wc_product_description,
         $wc_product_images,
+        $wc_categories,
        // $attributes,
        // $type,
         $woocommerce)
     {
         $wc_product_images = $this->formImages($wc_product_images);
-    
+        $categories = $this->formOcToWcCategories($wc_categories);
+        
         $data = [
             'name' => (string) $wc_product_name,
             'type' => 'simple',
@@ -805,11 +821,7 @@ class Db
             'description' => (string) $wc_product_description,
             'short_description' => (string) $wc_product_description,
             'sku' => (string) $wc_model, //Unique identifier.
-            'categories' => [
-                [
-                    'id' => 43
-                ]
-            ],
+            'categories' => $categories,
             'images' => $wc_product_images
         ];
         
