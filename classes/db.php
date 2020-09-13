@@ -787,10 +787,10 @@ class Db
     
     public function addProductFromOpenCart(
        // $category,
-        $name,
-        $price,
+        $wc_product_name,
+        $wc_price,
        // $vendor_code,
-        $description,
+        $wc_product_description,
         //$images,
        // $attributes,
        // $type,
@@ -798,11 +798,11 @@ class Db
     {
     
         $data = [
-            'name' => (string) $name,
+            'name' => (string) $wc_product_name,
             'type' => 'simple',
-            'regular_price' => (string) $price,
-            'description' => (string) $description,
-            'short_description' => (string) $description,
+            'regular_price' => (string) $wc_price,
+            'description' => (string) $wc_product_description,
+            'short_description' => (string) $wc_product_description,
             'categories' => [
                 [
                     'id' => 43
