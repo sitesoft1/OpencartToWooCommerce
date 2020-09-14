@@ -774,30 +774,6 @@ class Db
     
     //OC to WC methods ####################################################
     
-    public function formOcToWcAttributes($attributes)
-    {
-        foreach ($attributes as $attr_name => $attr_value){
-            $attribute_id =  $this->query_assoc("SELECT attribute_id FROM wp_woocommerce_attribute_taxonomies WHERE attribute_label='$attr_name'", "attribute_id");
-            
-            $variation = false;//true/false
-            
-            if(!empty($attribute_id) and !empty($attr_name) and !empty($attr_value)){
-                $attributes_arr[] = [
-                    'id' => (integer) $attribute_id, //id atrebuta v wordpress
-                    'name' => $attr_name, // nazva atrebuta
-                    //'position' => '0',
-                    'visible' => true, //bool
-                    'variation' => $variation, //bool
-                    'options' => [$attr_value], // masssiv znacheniy atributa
-                ];
-            }
-            
-            
-        }
-        
-        return $attributes_arr;
-    }
-    
     public function checkAddOcToWcAtributes($attributes, $woocommerce)
     {
         //CHECK ADD ATRIBUTES & TERMS
@@ -934,6 +910,33 @@ class Db
         return $categories;
     }
     
+    public function formOcToWcAttributes($attributes)
+    {
+        foreach ($attributes as $attr_name => $attr_value){
+            $attribute_id =  $this->query_assoc("SELECT attribute_id FROM wp_woocommerce_attribute_taxonomies WHERE attribute_label='$attr_name'", "attribute_id");
+            
+            $variation = false;//true/false
+            
+            if(!empty($attribute_id) and !empty($attr_name) and !empty($attr_value)){
+                if(!is_array($attr_value)){
+                    $attr_value = [$attr_value];
+                }
+                    $attributes_arr[] = [
+                        'id' => (integer) $attribute_id, //id atrebuta v wordpress
+                        'name' => $attr_name, // nazva atrebuta
+                        //'position' => '0',
+                        'visible' => true, //bool
+                        'variation' => $variation, //bool
+                        'options' => $attr_value // masssiv znacheniy atributa
+                    ];
+            }
+            
+            
+        }
+        
+        return $attributes_arr;
+    }
+    
     public function addOcToWcProduct(
         $wc_product_name,
         $wc_price,
@@ -959,8 +962,7 @@ class Db
         */
         $type = 'simple';
         $attributes = [
-            'Размер' => 'Большая (50 см)',
-            'Размер' => 'Маленькая (32 см)',
+            'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
         ];
         $attributes_arr = $this->formOcToWcAttributes($attributes);
         
