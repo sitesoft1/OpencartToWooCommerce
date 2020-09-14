@@ -774,6 +774,65 @@ class Db
     
 //OCtoWC methods #########################################################
     
+    public function addOcToWcProductDefaultAttributes($product_id, $woocommerce)
+    {
+        $product = $this->getProduct($product_id, $woocommerce);
+        $attributes = $product->attributes;
+        
+        $default_attributes = [];
+        foreach ($attributes as $attribute){
+            $default_attributes[] = [
+                'id' => (integer) $attribute->id,
+                'name' => $attribute->name,
+                'option' => $attribute->options[0]
+            ];
+        }
+        
+        /*
+        $data = [
+            'update' => [
+                [
+                    'id' => (integer) $product_id,
+                    'default_attributes' => $default_attributes
+                ]
+            ]
+        ];
+        */
+        $data = [
+            'update' => [
+                [
+                    'id' => (integer) $product_id,
+                    'default_attributes' => [
+                    
+                        [
+                            'id' => 2,
+                            'name' => 'Size',
+                            'option' => 'Small'
+                        ]
+                    
+                    ]
+                ]
+            ]
+        ];
+        
+        try {
+            $rezult = $woocommerce->post('products/batch', $data);
+        }
+        catch(Exception $e){
+            $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
+            $err = $info . $e->getMessage();
+            echo $err;
+            $this->errorLog($err);
+        }
+        
+       // show("Для товара $product_id пытаемся установить по умолчанию следующие атрибуты: ");
+       // dump($default_attributes);
+       // show("Результат операции:");
+        //dump($data);
+        print_r($rezult);
+        return $rezult;
+    }
+    
     public function formAddOcToWcVariations($product_id,
                                             $wc_model,
                                             $wc_price,
@@ -781,6 +840,7 @@ class Db
                                             //$images,
                                             $woocommerce)
     {
+        $i=1;
         foreach ($attributes as $attr_name => $attr_value) {
             
             $attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$attr_name'", "attribute_id");
@@ -794,7 +854,7 @@ class Db
                     
                     //create option
                     $create[] = [
-                        'regular_price' => (string)$wc_price,
+                        'regular_price' => (string)($wc_price+$i),
                         'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
                         //'image' => [ 'src' => (string)$images[0] ],
                         'attributes' => [$attributes_group_arr]
@@ -811,18 +871,20 @@ class Db
                         
                         //create option
                         $create[] = [
-                            'regular_price' => (string)$wc_price,
+                            'regular_price' => (string)($wc_price+$i),
                             'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
                             //'image' => [ 'src' => (string)$images[0] ],
                             'attributes' => [$attributes_group_arr]
                         ];
                         //create option END
+                        $i++;
                     }
                 }
                 
                 
             }
-            
+    
+            $i++;
         }
         
         
@@ -1030,7 +1092,7 @@ class Db
         */
         $type = 'variable';
         $attributes = [
-            'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
+            'Size' => ['Small', 'Medium']
         ];
         $attributes_arr = $this->formOcToWcAttributes($attributes);
         
@@ -1059,7 +1121,7 @@ class Db
     
         $product_id = $product_rezult->id;
         if($product_id){
-    
+            
             //добавим товару вариации
             $this->formAddOcToWcVariations($product_id,
                 $wc_model,
@@ -1068,6 +1130,7 @@ class Db
                 //$images,
                 $woocommerce);
             //добавим товару вариации КОНЕЦ
+            $this->addProductDefaultAttributes($product_id, $woocommerce);
             
             return $product_id;
         }else{
@@ -1468,7 +1531,7 @@ class Db
            $this->errorLog($err);
        }
        
-       dump($rezult);
+       //dump($rezult);
        return $rezult;
    }
     
@@ -1681,8 +1744,8 @@ class Db
             $this->errorLog($err);
         }
         
-        show("Для товара $product_id установлены по умолчанию следующие атрибуты: ");
-        dump($default_attributes);
+        //show("Для товара $product_id установлены по умолчанию следующие атрибуты: ");
+        //dump($default_attributes);
         
     }
 	
