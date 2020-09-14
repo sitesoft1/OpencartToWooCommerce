@@ -772,8 +772,76 @@ class Db
     }
     
     
-    //OC to WC methods ####################################################
+//OCtoWC methods #########################################################
     
+    public function formAddOcToWcVariations($product_id,
+                                            $wc_model,
+                                            $wc_price,
+                                            $attributes,
+                                            //$images,
+                                            $woocommerce)
+    {
+        foreach ($attributes as $attr_name => $attr_value) {
+            
+            $attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$attr_name'", "attribute_id");
+            if (!empty($attribute_id) and !empty($attr_value)) {
+                
+                if(!is_array($attr_value)){
+                    $attributes_group_arr = [
+                        'id' => (integer)$attribute_id,
+                        'option' => (string)$attr_value
+                    ];
+                    
+                    //create option
+                    $create[] = [
+                        'regular_price' => (string)$wc_price,
+                        'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
+                        //'image' => [ 'src' => (string)$images[0] ],
+                        'attributes' => [$attributes_group_arr]
+                    ];
+                    //create option END
+                }
+                
+                else{
+                    foreach ($attr_value as $attr_value_string){
+                        $attributes_group_arr = [
+                            'id' => (integer)$attribute_id,
+                            'option' => (string)$attr_value_string
+                        ];
+                        
+                        //create option
+                        $create[] = [
+                            'regular_price' => (string)$wc_price,
+                            'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
+                            //'image' => [ 'src' => (string)$images[0] ],
+                            'attributes' => [$attributes_group_arr]
+                        ];
+                        //create option END
+                    }
+                }
+                
+                
+            }
+            
+        }
+        
+        
+        $variations_data = [
+            'create' => $create
+        ];
+        
+        try {
+            $rezult = $woocommerce->post('products/' . $product_id . '/variations/batch', $variations_data);
+        } catch (Exception $e) {
+            $info = 'В методе: ' . __METHOD__ . ' около строки: ' . __LINE__ . ' произошла ошибка API: ';
+            $err = $info . $e->getMessage();
+            echo $err;
+            $this->errorLog($err);
+        }
+        
+        return $rezult;
+    }
+   
     public function checkAddOcToWcAtributes($attributes, $woocommerce)
     {
         //CHECK ADD ATRIBUTES & TERMS
@@ -915,7 +983,7 @@ class Db
         foreach ($attributes as $attr_name => $attr_value){
             $attribute_id =  $this->query_assoc("SELECT attribute_id FROM wp_woocommerce_attribute_taxonomies WHERE attribute_label='$attr_name'", "attribute_id");
             
-            $variation = false;//true/false
+            $variation = true;//true/false
             
             if(!empty($attribute_id) and !empty($attr_name) and !empty($attr_value)){
                 if(!is_array($attr_value)){
@@ -960,7 +1028,7 @@ class Db
             $type = 'simple';
         }
         */
-        $type = 'simple';
+        $type = 'variable';
         $attributes = [
             'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
         ];
@@ -991,6 +1059,16 @@ class Db
     
         $product_id = $product_rezult->id;
         if($product_id){
+    
+            //добавим товару вариации
+            $this->formAddOcToWcVariations($product_id,
+                $wc_model,
+                $wc_price,
+                $attributes,
+                //$images,
+                $woocommerce);
+            //добавим товару вариации КОНЕЦ
+            
             return $product_id;
         }else{
             return false;
@@ -998,7 +1076,7 @@ class Db
         
     }
     
-    //OC to WC methods END ####################################################
+//OCtoWC methods END ####################################################
     
     
     
