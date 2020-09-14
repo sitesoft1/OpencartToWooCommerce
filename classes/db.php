@@ -444,19 +444,6 @@ class Db
             
             
         }
-    
-        $attributes = null;
-        $attr_name = null;
-        $attr_value = null;
-        $attribute_id = null;
-        $variation = null;
-        $attr_group_id = null;
-        $variation = null;
-        unset($attributes,$attr_name,$attr_value,$attribute_id,$variation,$attr_group_id,$variation);
-    
-        //pauza dla sborki musora
-        //time_nanosleep(0, 10000000);
-        //pauza dla sborki musora
         
         return $attributes_arr;
     }
@@ -784,6 +771,153 @@ class Db
         return $short_description;
     }
     
+    
+    //OC to WC methods ####################################################
+    
+    public function formOcToWcAttributes($attributes)
+    {
+        foreach ($attributes as $attr_name => $attr_value){
+            $attribute_id =  $this->query_assoc("SELECT attribute_id FROM wp_woocommerce_attribute_taxonomies WHERE attribute_label='$attr_name'", "attribute_id");
+            
+            $variation = false;//true/false
+            
+            if(!empty($attribute_id) and !empty($attr_name) and !empty($attr_value)){
+                $attributes_arr[] = [
+                    'id' => (integer) $attribute_id, //id atrebuta v wordpress
+                    'name' => $attr_name, // nazva atrebuta
+                    //'position' => '0',
+                    'visible' => true, //bool
+                    'variation' => $variation, //bool
+                    'options' => [$attr_value], // masssiv znacheniy atributa
+                ];
+            }
+            
+            
+        }
+        
+        return $attributes_arr;
+    }
+    
+    public function checkAddOcToWcAtributes($attributes, $woocommerce)
+    {
+        //CHECK ADD ATRIBUTES & TERMS
+        foreach ($attributes as $attr_name => $attr_value){
+            //CHECK ATTR
+            $attr_name = (string) $attr_name;
+            $slug = translit($attr_name);
+            $attribute_id =  $this->query_assoc("SELECT attribute_id FROM wp_woocommerce_attribute_taxonomies WHERE attribute_label='$attr_name'", "attribute_id");
+            if(!$attribute_id){
+                $attribute_id = $this->query_assoc("SELECT attribute_id FROM wp_woocommerce_attribute_taxonomies WHERE attribute_name='$slug'", "attribute_id");
+            }
+            
+            if(!$attribute_id){
+                //ADD ATTR AND VALUE
+                //Create attr
+                $data_attr = [
+                    'name' => (string) $attr_name,
+                    'slug' => $slug,//obyazatelno 28 simbols
+                    'type' => 'select',
+                    'order_by' => 'id',
+                    'has_archives' => true
+                ];
+                if(!empty($attr_name)){
+                    
+                    try {
+                        $attr = $woocommerce->post('products/attributes', $data_attr);
+                    }
+                    catch(Exception $e){
+                        $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
+                        $err = $info . $e->getMessage();
+                        echo $err;
+                        $this->errorLog($err);
+                    }
+                    
+                }else{
+                    $this->errorLog("Название атребута пустое 1");
+                }
+    
+                $this->errorLog("Создан новый атребут: ".$attr->id);
+                //Create attr
+                
+                //Check attr value
+                $attr_value = (string) $attr_value;
+                $attr_value_slug = translit($attr_value);
+                $attr_value_id = $this->query_assoc("SELECT term_id FROM `wp_terms` WHERE name='$attr_value'","term_id");
+                if(!$attr_value_id){
+                    $attr_value_id = $this->query_assoc("SELECT term_id FROM `wp_terms` WHERE slug='$attr_value_slug'","term_id");
+                }
+                
+                if(!$attr_value_id){
+                    //CREATE attr_value
+                    $data_attr_value = [
+                        'name' => (string) $attr_value,
+                        'slug' => $attr_value_slug
+                    ];
+                    
+                    if(!empty($attr_value)){
+                        
+                        try {
+                            $attr_term = $woocommerce->post('products/attributes/'.$attr->id.'/terms', $data_attr_value);
+                        }
+                        catch(Exception $e){
+                            $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
+                            $err = $info . $e->getMessage();
+                            echo $err;
+                            $this->errorLog($err);
+                        }
+                        
+                    }else{
+                        $this->errorLog("Значение атребута пустое 1");
+                    }
+                    //CREATE attr_value END
+                }
+                //ADD ATTR AND VALUE END
+                
+            }else{
+                //ATRIBUTE ISSET CHECK ADD VALUE
+                $attr_value = (string) $attr_value;
+                $attr_value_slug = translit($attr_value);
+                $attr_value_id = $this->query_assoc("SELECT term_id FROM `wp_terms` WHERE name='$attr_value'","term_id");
+                if(!$attr_value_id){
+                    $attr_value_id = $this->query_assoc("SELECT term_id FROM `wp_terms` WHERE slug='$attr_value_slug'","term_id");
+                }
+                
+                if (!$attr_value_id){
+                    //CREATE attr_value
+                    $data_attr_value = [
+                        'name' => (string) $attr_value,
+                        'slug' => $attr_value_slug
+                    ];
+                    
+                    if(!empty($attr_value)){
+                        
+                        try {
+                            $attr_term = $woocommerce->post('products/attributes/'.$attribute_id.'/terms', $data_attr_value);
+                        }
+                        catch(Exception $e){
+                            $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
+                            $err = $info . $e->getMessage();
+                            echo $err;
+                            $this->errorLog($err);
+                        }
+                        
+                    }else{
+                        $this->errorLog("Значение атребута пустое 2");
+                    }
+    
+                    $this->errorLog("Атрибут существует! Создано новое значение атребута с id значения: " . $attr_term->id);
+                    //CREATE attr_value END
+                }
+                //ATRIBUTE ISSET CHECK ADD VALUE END
+            }
+            //CHECK ATTR END
+        }
+        //CHECK ADD ATRIBUTES & TERMS END
+        
+        return true;//chtonibut vernem
+    }
+    
+    
     public function formOcToWcCategories($wc_categories)
     {
         if(!empty($wc_categories)){
@@ -807,22 +941,40 @@ class Db
         $wc_product_description,
         $wc_product_images,
         $wc_categories,
+        //$wc_product_options,
        // $attributes,
        // $type,
         $woocommerce)
     {
         $wc_product_images = $this->formImages($wc_product_images);
         $categories = $this->formOcToWcCategories($wc_categories);
+        /*
+        //Создадим опции если не существуют
+        if(!empty($wc_product_options)){
+            $this->checkAddOcToWcAtributes($wc_product_options, $woocommerce);
+            $type = 'variable';
+        }else{
+            $type = 'simple';
+        }
+        */
+        $type = 'simple';
+        $attributes = [
+            'Размер' => 'Большая (50 см)',
+            'Размер' => 'Маленькая (32 см)',
+        ];
+        $attributes_arr = $this->formOcToWcAttributes($attributes);
+        
         
         $data = [
             'name' => (string) $wc_product_name,
-            'type' => 'simple',
+            'type' => $type, //Product type. Options: simple, grouped, external and variable. Default is simple
             'regular_price' => (string) $wc_price,
             'description' => (string) $wc_product_description,
             'short_description' => (string) $wc_product_description,
             'sku' => (string) $wc_model, //Unique identifier.
             'categories' => $categories,
-            'images' => $wc_product_images
+            'images' => $wc_product_images,
+            'attributes' => $attributes_arr
         ];
         
         try {
@@ -843,6 +995,8 @@ class Db
         }
         
     }
+    
+    //OC to WC methods END ####################################################
     
     
     

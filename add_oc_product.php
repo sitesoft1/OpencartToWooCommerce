@@ -51,6 +51,7 @@ if(!empty($_POST)){
     $wc_model = $_POST['wc_model'];
     $wc_product_images = $_POST['wc_product_images'];
     $wc_categories = $_POST['wc_categories'];
+    //$wc_product_options = $_POST['wc_product_options'];
     
     
     $rezult = $db->addOcToWcProduct(
@@ -60,6 +61,7 @@ if(!empty($_POST)){
         $wc_product_description,
         $wc_product_images,
         $wc_categories,
+        //$wc_product_options,
         $woocommerce);
     echo json_encode($rezult);
 }
