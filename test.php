@@ -49,7 +49,13 @@ dump($product);
 $attributes = $product->attributes;
 dump($attributes);
 */
+/*
 $db->addOcToWcProductDefaultAttributes($product_id, $woocommerce);
 $product = $db->getProduct($product_id, $woocommerce);
 dump($product);
+*/
+$attributes = [
+    'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
+];
+$db->checkAddOcToWcAtributes($attributes, $woocommerce);
 
