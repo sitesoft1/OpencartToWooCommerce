@@ -57,5 +57,13 @@ dump($product);
 $attributes = [
     'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
 ];
-$db->checkAddOcToWcAtributes($attributes, $woocommerce);
+
+$attributes2 = [
+    'Кол-во' => ['1 шт', '24 шт'],
+    'Острота' => ['Средняя', 'Острая', 'Чили'],
+];
+
+$rez = array_merge($attributes1, $attributes2);
+dump($rez);
+//$db->checkAddOcToWcAtributes($attributes, $woocommerce);
 

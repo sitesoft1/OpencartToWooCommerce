@@ -854,7 +854,7 @@ class Db
                     
                     //create option
                     $create[] = [
-                        'regular_price' => (string)($wc_price+$i),
+                        'regular_price' => (string)$wc_price,
                         'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
                         //'image' => [ 'src' => (string)$images[0] ],
                         'attributes' => [$attributes_group_arr]
@@ -871,7 +871,7 @@ class Db
                         
                         //create option
                         $create[] = [
-                            'regular_price' => (string)($wc_price+$i),
+                            'regular_price' => (string)$wc_price,
                             'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
                             //'image' => [ 'src' => (string)$images[0] ],
                             'attributes' => [$attributes_group_arr]
@@ -1073,12 +1073,19 @@ class Db
         return $categories;
     }
     
-    public function formOcToWcAttributes($attributes)
+    public function formOcToWcAttributes($attributes, $variation=false)
     {
         foreach ($attributes as $attr_name => $attr_value){
             $attribute_id =  $this->query_assoc("SELECT attribute_id FROM wp_woocommerce_attribute_taxonomies WHERE attribute_label='$attr_name'", "attribute_id");
             
-            $variation = true;//true/false
+            /*
+            if($attr_name == 'Размер'){
+                $variation = true;//true/false
+            }else{
+                $variation = false;//true/false
+            }
+            */
+            
             
             if(!empty($attribute_id) and !empty($attr_name) and !empty($attr_value)){
                 if(!is_array($attr_value)){
@@ -1123,12 +1130,24 @@ class Db
             $type = 'simple';
         }
         */
+        //$type = 'simple';
         $type = 'variable';
-        $attributes = [
+        $attributes1 = [
             'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
         ];
+        $attributes2 = [
+            'Кол-во' => ['1 шт', '24 шт'],
+            'Острота' => ['Средняя', 'Острая', 'Чили'],
+        ];
+    
+        //добавим атребуты и их значения в wordpress
+        $attributes = array_merge($attributes1, $attributes2);
         $this->checkAddOcToWcAtributes($attributes, $woocommerce);
-        $attributes_arr = $this->formOcToWcAttributes($attributes);
+        
+        //Сформируем массив атрибутов для товара
+        $attributes_arr1 = $this->formOcToWcAttributes($attributes1, true);
+        $attributes_arr2 = $this->formOcToWcAttributes($attributes2, false);
+        $attributes_arr = array_merge($attributes_arr1, $attributes_arr2);
         
         
         $data = [
@@ -1160,11 +1179,15 @@ class Db
             $this->formAddOcToWcVariations($product_id,
                 $wc_model,
                 $wc_price,
-                $attributes,
+                $attributes1,
                 //$images,
                 $woocommerce);
             //добавим товару вариации КОНЕЦ
-            $this->addProductDefaultAttributes($product_id, $woocommerce);
+            
+            //Зададим выбранные атребуты по умолчанию ДОРАБОТАТЬ
+            //$this->addProductDefaultAttributes($product_id, $woocommerce);//пока не надо
+            
+            
             
             return $product_id;
         }else{
