@@ -1099,12 +1099,16 @@ class Db
                         'variation' => $variation, //bool
                         'options' => $attr_value // masssiv znacheniy atributa
                     ];
+                
             }
             
             
         }
-        
-        return $attributes_arr;
+        if(isset($attributes_arr)){
+            return $attributes_arr;
+        }else{
+            return [];
+        }
     }
     
     public function addOcToWcProduct(
@@ -1114,6 +1118,7 @@ class Db
         $wc_product_description,
         $wc_product_images,
         $wc_categories,
+        $wc_attributes,
         //$wc_product_options,
        // $attributes,
        // $type,
@@ -1135,10 +1140,7 @@ class Db
         $attributes1 = [
             'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
         ];
-        $attributes2 = [
-            'Кол-во' => ['1 шт', '24 шт'],
-            'Острота' => ['Средняя', 'Острая', 'Чили'],
-        ];
+        $attributes2 = $wc_attributes;
     
         //добавим атребуты и их значения в wordpress
         $attributes = array_merge($attributes1, $attributes2);
@@ -1194,6 +1196,11 @@ class Db
             return false;
         }
         
+    }
+    
+    public function log($filename, $data)
+    {
+        file_put_contents(LOG_DIR.'/'.$filename.'.txt', print_r($data, true));
     }
     
 //OCtoWC methods END ####################################################
