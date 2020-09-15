@@ -916,6 +916,7 @@ class Db
                                             //$images,
                                             $woocommerce)
     {
+        $c_attributes = $attributes;
        
         foreach ($attributes as $attr_name => $attr_value) {
             
@@ -927,23 +928,44 @@ class Db
                         $value = $attr_value_arr['value'];
                         $price = $attr_value_arr['price'];
                         $price_prefix = $attr_value_arr['price_prefix'];
+    
                         if($price_prefix == '+'){
                             $wc_price = $wc_price+$price;
                         }else if($price_prefix == '-'){
                             $wc_price = $wc_price-$price;
                         }
-                        
-                        $attributes_group_arr = [
+    
+                        $attributes_group_arr[] = [
                             'id' => (integer)$attribute_id,
                             'option' => (string)$value
                         ];
+                        
+                        foreach ($c_attributes as $c_attr_name => $c_attr_value){
+                            $c_attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$c_attr_name'", "attribute_id");
+                            if (!empty($c_attribute_id) and !empty($c_attr_value)) {
+                                if($c_attr_name != $attr_name){
+                                    foreach ($c_attr_value as $c_attr_value_arr){
+                                        $c_value = $c_attr_value_arr['value'];
+                                        $c_price = $c_attr_value_arr['price'];
+                                        $c_price_prefix = $c_attr_value_arr['price_prefix'];
+    
+                                        $attributes_group_arr[] = [
+                                            'id' => (integer)$c_attribute_id,
+                                            'option' => (string)$c_value
+                                        ];
+                                        
+                                    }
+                                }
+                            }
+                        }
+                        
                         
                         //create option
                         $create[] = [
                             'regular_price' => (string)$wc_price,
                             'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
                             //'image' => [ 'src' => (string)$images[0] ],
-                            'attributes' => [$attributes_group_arr]
+                            'attributes' => $attributes_group_arr
                         ];
                         //create option END
                     }
