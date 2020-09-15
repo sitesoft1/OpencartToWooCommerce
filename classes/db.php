@@ -924,15 +924,16 @@ class Db
             if (!empty($attribute_id) and !empty($attr_value)) {
                 
                     foreach ($attr_value as $attr_value_arr){
+                        $attributes_group_arr = [];
     
                         $value = $attr_value_arr['value'];
                         $price = $attr_value_arr['price'];
                         $price_prefix = $attr_value_arr['price_prefix'];
     
                         if($price_prefix == '+'){
-                            $wc_price = $wc_price+$price;
+                            $option_price = $wc_price+$price;
                         }else if($price_prefix == '-'){
-                            $wc_price = $wc_price-$price;
+                            $option_price = $wc_price-$price;
                         }
     
                         $attributes_group_arr[] = [
@@ -962,7 +963,7 @@ class Db
                         
                         //create option
                         $create[] = [
-                            'regular_price' => (string)$wc_price,
+                            'regular_price' => (string)$option_price,
                             'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
                             //'image' => [ 'src' => (string)$images[0] ],
                             'attributes' => $attributes_group_arr
@@ -977,6 +978,8 @@ class Db
         $variations_data = [
             'create' => $create
         ];
+        
+        $this->log('variations_data',$variations_data);
         
         try {
             $rezult = $woocommerce->post('products/' . $product_id . '/variations/batch', $variations_data);
