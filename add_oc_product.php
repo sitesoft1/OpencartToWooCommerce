@@ -93,7 +93,14 @@ if(!empty($_POST)){
     }else{
         $wc_variations = [];
     }
-    $db->log('wc_variations', $wc_variations);
+    //$db->log('wc_variations', $wc_variations);
+    
+    if(!empty($_POST['wc_form_variations'])){
+        $wc_form_variations = $_POST['wc_form_variations'];
+    }else{
+        $wc_form_variations = [];
+    }
+    $db->log('wc_form_variations', $wc_form_variations);
     
     
     $rezult = $db->addOcToWcProduct(
@@ -105,6 +112,7 @@ if(!empty($_POST)){
         $wc_categories,
         $wc_attributes,
         $wc_variations,
+        $wc_form_variations,
         //$wc_product_options,
         $woocommerce);
     echo json_encode($rezult);

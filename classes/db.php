@@ -833,11 +833,13 @@ class Db
         return $rezult;
     }
     
+    
+    /*
     public function formAddOcToWcVariations($product_id,
                                             $wc_model,
                                             $wc_price,
                                             $attributes,
-                                            //$images,
+        //$images,
                                             $woocommerce)
     {
         $i=1;
@@ -883,10 +885,72 @@ class Db
                 
                 
             }
-    
+            
             $i++;
         }
         
+        
+        $variations_data = [
+            'create' => $create
+        ];
+        
+        try {
+            $rezult = $woocommerce->post('products/' . $product_id . '/variations/batch', $variations_data);
+        } catch (Exception $e) {
+            $info = 'В методе: ' . __METHOD__ . ' около строки: ' . __LINE__ . ' произошла ошибка API: ';
+            $err = $info . $e->getMessage();
+            echo $err;
+            $this->errorLog($err);
+        }
+        
+        return $rezult;
+    }
+    */
+    
+    
+    
+    public function formAddOcToWcVariations($product_id,
+                                            $wc_model,
+                                            $wc_price,
+                                            $attributes,
+                                            //$images,
+                                            $woocommerce)
+    {
+       
+        foreach ($attributes as $attr_name => $attr_value) {
+            
+            $attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$attr_name'", "attribute_id");
+            if (!empty($attribute_id) and !empty($attr_value)) {
+                
+                    foreach ($attr_value as $attr_value_arr){
+    
+                        $value = $attr_value_arr['value'];
+                        $price = $attr_value_arr['price'];
+                        $price_prefix = $attr_value_arr['price_prefix'];
+                        if($price_prefix == '+'){
+                            $wc_price = $wc_price+$price;
+                        }else if($price_prefix == '-'){
+                            $wc_price = $wc_price-$price;
+                        }
+                        
+                        $attributes_group_arr = [
+                            'id' => (integer)$attribute_id,
+                            'option' => (string)$value
+                        ];
+                        
+                        //create option
+                        $create[] = [
+                            'regular_price' => (string)$wc_price,
+                            'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
+                            //'image' => [ 'src' => (string)$images[0] ],
+                            'attributes' => [$attributes_group_arr]
+                        ];
+                        //create option END
+                    }
+                    
+            }
+            
+        }
         
         $variations_data = [
             'create' => $create
@@ -1120,6 +1184,7 @@ class Db
         $wc_categories,
         $wc_attributes,
         $wc_variations,
+        $wc_form_variations,
         //$wc_product_options,
        // $attributes,
        // $type,
@@ -1202,7 +1267,7 @@ class Db
             $this->formAddOcToWcVariations($product_id,
                 $wc_model,
                 $wc_price,
-                $wc_variations,
+                $wc_form_variations,
                 //$images,
                 $woocommerce);
             //добавим товару вариации КОНЕЦ
