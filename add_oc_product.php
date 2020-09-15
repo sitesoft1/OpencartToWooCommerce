@@ -45,13 +45,48 @@ $woocommerce = new Client(
 
 //GET opencart data
 if(!empty($_POST)){
-    $wc_product_name = $_POST['wc_product_name'];
-    $wc_price = $_POST['wc_price'];
-    $wc_product_description = $_POST['wc_product_description'];
-    $wc_model = $_POST['wc_model'];
-    $wc_product_images = $_POST['wc_product_images'];
-    $wc_categories = $_POST['wc_categories'];
-    $wc_attributes = $_POST['wc_attributes'];
+    
+    if(!empty($_POST['wc_product_name'])){
+        $wc_product_name = $_POST['wc_product_name'];
+    }else{
+        $wc_product_name = '';
+    }
+    
+    if(!empty($_POST['wc_price'])){
+        $wc_price = $_POST['wc_price'];
+    }else{
+        $wc_price = '';
+    }
+    
+    if(!empty($_POST['wc_product_description'])){
+        $wc_product_description = $_POST['wc_product_description'];
+    }else{
+        $wc_product_description = '';
+    }
+    
+    if(!empty($_POST['wc_model'])){
+        $wc_model = $_POST['wc_model'];
+    }else{
+        $wc_model = '';
+    }
+    
+    if(!empty($_POST['wc_product_images'])){
+        $wc_product_images = $_POST['wc_product_images'];
+    }else{
+        $wc_product_images = [];
+    }
+    
+    if(!empty($_POST['wc_categories'])){
+        $wc_categories = $_POST['wc_categories'];
+    }else{
+        $wc_categories = '';
+    }
+    
+    if(!empty($_POST['wc_attributes'])){
+        $wc_attributes = $_POST['wc_attributes'];
+    }else{
+        $wc_attributes = [];
+    }
     
     
     $rezult = $db->addOcToWcProduct(

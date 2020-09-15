@@ -1142,14 +1142,30 @@ class Db
         ];
     
         //добавим атребуты и их значения в wordpress
-        $attributes = array_merge($wc_variations, $wc_attributes);
-        $this->checkAddOcToWcAtributes($attributes, $woocommerce);
+        if(!empty($wc_variations) and !empty($wc_attributes)){
+            $attributes = array_merge($wc_variations, $wc_attributes);
+        }
+        if(!empty($attributes)){
+            $this->checkAddOcToWcAtributes($attributes, $woocommerce);
+        }
         
         //Сформируем массив атрибутов для товара
-        $attributes_arr1 = $this->formOcToWcAttributes($wc_variations, true);
-        $attributes_arr2 = $this->formOcToWcAttributes($wc_attributes, false);
-        $attributes_arr = array_merge($attributes_arr1, $attributes_arr2);
+        if(!empty($wc_variations)){
+            $variations_arr = $this->formOcToWcAttributes($wc_variations, true);
+        }
+        if(!empty($wc_attributes)){
+            $attributes_arr = $this->formOcToWcAttributes($wc_attributes, false);
+        }
         
+        
+        if(!empty($variations_arr) and !empty($attributes_arr)){
+            $attributes_variations_arr = array_merge($variations_arr,  $attributes_arr);
+        }else if(!empty($variations_arr)){
+            $attributes_variations_arr = $variations_arr;
+        }else if(!empty($attributes_arr)){
+            $attributes_variations_arr = $attributes_arr;
+        }
+       
         
         $data = [
             'name' => (string) $wc_product_name,
@@ -1160,7 +1176,7 @@ class Db
             'sku' => (string) $wc_model, //Unique identifier.
             'categories' => $categories,
             'images' => $wc_product_images,
-            'attributes' => $attributes_arr
+            'attributes' => $attributes_variations_arr
         ];
         
         try {
