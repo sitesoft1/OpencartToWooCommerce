@@ -1137,18 +1137,17 @@ class Db
         */
         //$type = 'simple';
         $type = 'variable';
-        $attributes1 = [
+        $wc_variations = [
             'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
         ];
-        $attributes2 = $wc_attributes;
     
         //добавим атребуты и их значения в wordpress
-        $attributes = array_merge($attributes1, $attributes2);
+        $attributes = array_merge($wc_variations, $wc_attributes);
         $this->checkAddOcToWcAtributes($attributes, $woocommerce);
         
         //Сформируем массив атрибутов для товара
-        $attributes_arr1 = $this->formOcToWcAttributes($attributes1, true);
-        $attributes_arr2 = $this->formOcToWcAttributes($attributes2, false);
+        $attributes_arr1 = $this->formOcToWcAttributes($wc_variations, true);
+        $attributes_arr2 = $this->formOcToWcAttributes($wc_attributes, false);
         $attributes_arr = array_merge($attributes_arr1, $attributes_arr2);
         
         
@@ -1181,7 +1180,7 @@ class Db
             $this->formAddOcToWcVariations($product_id,
                 $wc_model,
                 $wc_price,
-                $attributes1,
+                $wc_variations,
                 //$images,
                 $woocommerce);
             //добавим товару вариации КОНЕЦ

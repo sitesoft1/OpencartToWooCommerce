@@ -52,7 +52,6 @@ if(!empty($_POST)){
     $wc_product_images = $_POST['wc_product_images'];
     $wc_categories = $_POST['wc_categories'];
     $wc_attributes = $_POST['wc_attributes'];
-    $db->log('wc_attributes',$wc_attributes);
     
     
     $rezult = $db->addOcToWcProduct(
