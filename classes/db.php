@@ -1119,6 +1119,7 @@ class Db
         $wc_product_images,
         $wc_categories,
         $wc_attributes,
+        $wc_variations,
         //$wc_product_options,
        // $attributes,
        // $type,
@@ -1137,14 +1138,19 @@ class Db
         */
         //$type = 'simple';
         $type = 'variable';
+        
+        /*
         $wc_variations = [
-            'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
+            'Размер' => ['Большая (50 см)', 'Маленькая (32 см)'],
+            'Бортик' => ['Тонкий', 'Пышный']
         ];
-    
+        */
+        
         //добавим атребуты и их значения в wordpress
-        if(!empty($wc_variations) and !empty($wc_attributes)){
+        //if(!empty($wc_variations) and !empty($wc_attributes)){
             $attributes = array_merge($wc_variations, $wc_attributes);
-        }
+       // }
+        
         if(!empty($attributes)){
             $this->checkAddOcToWcAtributes($attributes, $woocommerce);
         }
