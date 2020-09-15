@@ -1092,8 +1092,9 @@ class Db
         */
         $type = 'variable';
         $attributes = [
-            'Size' => ['Small', 'Medium']
+            'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
         ];
+        $this->checkAddOcToWcAtributes($attributes, $woocommerce);
         $attributes_arr = $this->formOcToWcAttributes($attributes);
         
         
