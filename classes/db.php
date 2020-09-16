@@ -933,12 +933,11 @@ class Db
                         $price = $attr_value_arr['price'];
                         $price_prefix = $attr_value_arr['price_prefix'];
     
+                        $option_price = $wc_price;
                         if($price_prefix == '+'){
                             $option_price = $wc_price+$price;
                         }else if($price_prefix == '-'){
                             $option_price = $wc_price-$price;
-                        }else{
-                            $option_price = $wc_price;
                         }
     
                         $attributes_group_arr[] = [
@@ -955,6 +954,13 @@ class Db
                                         $c_price = $c_attr_value_arr['price'];
                                         $c_price_prefix = $c_attr_value_arr['price_prefix'];
     
+                                        $c_option_price = $option_price;
+                                        if($c_price_prefix == '+'){
+                                            $c_option_price = $option_price+$c_price;
+                                        }else if($c_price_prefix == '-'){
+                                            $c_option_price = $option_price-$c_price;
+                                        }
+    
                                         
                                         $attributes_group_arr1 = $attributes_group_arr;
                                         $attributes_group_arr1[] = [
@@ -965,7 +971,7 @@ class Db
     
                                         //create option
                                         $create[] = [
-                                            'regular_price' => (string)$option_price,
+                                            'regular_price' => (string)$c_option_price,
                                             'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
                                             //'image' => [ 'src' => (string)$images[0] ],
                                             'attributes' => $attributes_group_arr1
