@@ -358,7 +358,7 @@ class Db
     
         //pauza dla sborki musora
         //time_nanosleep(0, 10000000);
-        //pauza dla sborki musora
+        //pauza dla sborki musor
         
         return $categories;
     }
