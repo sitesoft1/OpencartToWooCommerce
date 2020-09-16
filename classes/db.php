@@ -918,17 +918,106 @@ class Db
     {
         $c_attributes = $attributes;
        
-        foreach ($attributes as $attr_name => $attr_value) {
-    
-           // $create = [];
+        //if(isset($attributes[1])){
+            foreach ($attributes as $attr_name => $attr_value) {
+        
+                $attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$attr_name'", "attribute_id");
+                if (!empty($attribute_id) and !empty($attr_value)) {
             
-            $attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$attr_name'", "attribute_id");
-            if (!empty($attribute_id) and !empty($attr_value)) {
-                
                     foreach ($attr_value as $attr_value_arr){
                         $attributes_group_arr = [];
                         $create = [];
-    
+                
+                        $value = $attr_value_arr['value'];
+                        $price = $attr_value_arr['price'];
+                        $price_prefix = $attr_value_arr['price_prefix'];
+                
+                        $option_price = $wc_price;
+                        if($price_prefix == '+'){
+                            $option_price = $wc_price+$price;
+                        }else if($price_prefix == '-'){
+                            $option_price = $wc_price-$price;
+                        }
+                
+                        $attributes_group_arr[] = [
+                            'id' => (integer)$attribute_id,
+                            'option' => (string)$value
+                        ];
+                
+                        foreach ($c_attributes as $c_attr_name => $c_attr_value){
+                            $c_attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$c_attr_name'", "attribute_id");
+                            if (!empty($c_attribute_id) and !empty($c_attr_value)) {
+                                if($c_attr_name != $attr_name){
+                                    foreach ($c_attr_value as $c_attr_value_arr){
+                                        $c_value = $c_attr_value_arr['value'];
+                                        $c_price = $c_attr_value_arr['price'];
+                                        $c_price_prefix = $c_attr_value_arr['price_prefix'];
+                                
+                                        $c_option_price = $option_price;
+                                        if($c_price_prefix == '+'){
+                                            $c_option_price = $option_price+$c_price;
+                                        }else if($c_price_prefix == '-'){
+                                            $c_option_price = $option_price-$c_price;
+                                        }
+                                
+                                
+                                        $attributes_group_arr1 = $attributes_group_arr;
+                                        $attributes_group_arr1[] = [
+                                            'id' => (integer)$c_attribute_id,
+                                            'option' => (string)$c_value
+                                        ];
+                                
+                                
+                                        //create option
+                                        $create[] = [
+                                            'regular_price' => (string)$c_option_price,
+                                            'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
+                                            //'image' => [ 'src' => (string)$images[0] ],
+                                            'attributes' => $attributes_group_arr1
+                                        ];
+                                        //create option END
+                                
+                                        //########################################################################
+                                
+                                        $variations_data = [
+                                            'create' => $create
+                                        ];
+                                
+                                        //$this->log('variations_data', $variations_data, true);
+                                
+                                        try {
+                                            $rezult = $woocommerce->post('products/' . $product_id . '/variations/batch', $variations_data);
+                                        } catch (Exception $e) {
+                                            $info = 'В методе: ' . __METHOD__ . ' около строки: ' . __LINE__ . ' произошла ошибка API: ';
+                                            $err = $info . $e->getMessage();
+                                            echo $err;
+                                            $this->errorLog($err);
+                                        }
+                                
+                                        //########################################################################
+                                
+                                    }
+                                }
+                            }
+                        }
+                
+                        //create bilo tut...
+                    }
+            
+                }
+                break;//Завершим цикл так как нужно прогнать только первуюопцию во избежание дуюблей
+            }
+        //}
+        //Если нет опций для взаимосвязи
+        /*
+        else{
+            foreach ($attributes as $attr_name => $attr_value) {
+                $attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$attr_name'", "attribute_id");
+                if (!empty($attribute_id) and !empty($attr_value)) {
+                    foreach ($attr_value as $attr_value_arr){
+                        $attributes_group_arr = [];
+                        $create = [];
+                        
                         $value = $attr_value_arr['value'];
                         $price = $attr_value_arr['price'];
                         $price_prefix = $attr_value_arr['price_prefix'];
@@ -944,77 +1033,41 @@ class Db
                             'id' => (integer)$attribute_id,
                             'option' => (string)$value
                         ];
+    
+                        //create option
+                        $create[] = [
+                            'regular_price' => (string)$option_price,
+                            'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
+                            //'image' => [ 'src' => (string)$images[0] ],
+                            'attributes' => $attributes_group_arr
+                        ];
+                        //create option END
+    
+                        //########################################################################
+                        $variations_data = [
+                            'create' => $create
+                        ];
                         
-                        foreach ($c_attributes as $c_attr_name => $c_attr_value){
-                            $c_attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$c_attr_name'", "attribute_id");
-                            if (!empty($c_attribute_id) and !empty($c_attr_value)) {
-                                if($c_attr_name != $attr_name){
-                                    foreach ($c_attr_value as $c_attr_value_arr){
-                                        $c_value = $c_attr_value_arr['value'];
-                                        $c_price = $c_attr_value_arr['price'];
-                                        $c_price_prefix = $c_attr_value_arr['price_prefix'];
-    
-                                        $c_option_price = $option_price;
-                                        if($c_price_prefix == '+'){
-                                            $c_option_price = $option_price+$c_price;
-                                        }else if($c_price_prefix == '-'){
-                                            $c_option_price = $option_price-$c_price;
-                                        }
-    
-                                        
-                                        $attributes_group_arr1 = $attributes_group_arr;
-                                        $attributes_group_arr1[] = [
-                                            'id' => (integer)$c_attribute_id,
-                                            'option' => (string)$c_value
-                                        ];
-    
-    
-                                        //create option
-                                        $create[] = [
-                                            'regular_price' => (string)$c_option_price,
-                                            'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
-                                            //'image' => [ 'src' => (string)$images[0] ],
-                                            'attributes' => $attributes_group_arr1
-                                        ];
-                                        //create option END
-    
-                                        //########################################################################
-    
-                                        $variations_data = [
-                                            'create' => $create
-                                        ];
-    
-                                        $this->log('variations_data', $variations_data, true);
-    
-                                        try {
-                                            $rezult = $woocommerce->post('products/' . $product_id . '/variations/batch', $variations_data);
-                                        } catch (Exception $e) {
-                                            $info = 'В методе: ' . __METHOD__ . ' около строки: ' . __LINE__ . ' произошла ошибка API: ';
-                                            $err = $info . $e->getMessage();
-                                            echo $err;
-                                            $this->errorLog($err);
-                                        }
-    
-                                        //########################################################################
-                                        
-                                        
-                                    }
-                                }
-                            }
+                        try {
+                            $rezult = $woocommerce->post('products/' . $product_id . '/variations/batch', $variations_data);
+                        } catch (Exception $e) {
+                            $info = 'В методе: ' . __METHOD__ . ' около строки: ' . __LINE__ . ' произошла ошибка API: ';
+                            $err = $info . $e->getMessage();
+                            echo $err;
+                            $this->errorLog($err);
                         }
+                        //########################################################################
                         
-                        
-                        //create bilo tut...
                     }
-                    
+                }
             }
-            break;//Завершим цикл так как нужно прогнать только первуюопцию во избежание дуюблей
-            
         }
+        */
+        
         
 //... try bilo
         
-        return $rezult;
+        //return $rezult;
     }
     
     public function createSlug($name){
