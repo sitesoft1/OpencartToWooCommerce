@@ -1749,7 +1749,8 @@ class Db
     {
         
         try {
-            dump($woocommerce->delete('products/'.$product_id, ['force' => true]));
+            $result = $woocommerce->delete('products/'.$product_id, ['force' => true]);
+            return $result;
         }
         catch(Exception $e){
             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
