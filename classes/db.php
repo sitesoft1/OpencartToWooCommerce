@@ -366,14 +366,15 @@ class Db
     public function formImages($images)
     {
         $images_arr = [];
-        foreach ($images as $src){
-            $images_arr[] = [ 'src' => (string) $src ];
+        if(!empty($images)){
+            foreach ($images as $src){
+                $images_arr[] = [ 'src' => (string) $src ];
+            }
+        }else{
+            $images_arr[] = [ 'src' => 'https://sushiboss.od.ua/image/wc-600x600.png'  ];
         }
-    
-        $images = null;
-        $src = null;
-        unset($images,$src);
-    
+        
+        
         //pauza dla sborki musora
         //time_nanosleep(0, 10000000);
         //pauza dla sborki musora
