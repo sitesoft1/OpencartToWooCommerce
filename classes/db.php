@@ -2,9 +2,17 @@
 //
 set_time_limit(0);//snimaem ogranicheniya na vipolneniya skripta
 //define('LANGUAGE_ID', 1);
+//Погасим ошибки
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
+
+/*
+//выводить все ошибки
 ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
+*/
 
 require_once __DIR__ . '/../functions.php';
 require_once __DIR__ . '/../config.php';
@@ -192,7 +200,7 @@ class Db
                     catch(Exception $e){
                         $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                         $err = $info . $e->getMessage();
-                        echo $err;
+                        ////echo $err;
                         $this->errorLog($err);
                     }
                     
@@ -226,7 +234,7 @@ class Db
                         catch(Exception $e){
                             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                             $err = $info . $e->getMessage();
-                            echo $err;
+                            //echo $err;
                             $this->errorLog($err);
                         }
                         
@@ -269,7 +277,7 @@ class Db
                         catch(Exception $e){
                             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                             $err = $info . $e->getMessage();
-                            echo $err;
+                            //echo $err;
                             $this->errorLog($err);
                         }
                         
@@ -460,7 +468,7 @@ class Db
         catch(Exception $e){
             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
         
@@ -556,7 +564,7 @@ class Db
                 catch(Exception $e){
                     $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                     $err = $info . $e->getMessage();
-                    echo $err;
+                    //echo $err;
                     $this->errorLog($err);
                 }
                 
@@ -685,7 +693,7 @@ class Db
             catch(Exception $e){
                 $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                 $err = $info . $e->getMessage();
-                echo $err;
+                //echo $err;
                 $this->errorLog($err);
             }
             
@@ -821,7 +829,7 @@ class Db
         catch(Exception $e){
             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
         
@@ -916,7 +924,7 @@ class Db
                                         } catch (Exception $e) {
                                             $info = 'В методе: ' . __METHOD__ . ' около строки: ' . __LINE__ . ' произошла ошибка API: ';
                                             $err = $info . $e->getMessage();
-                                            echo $err;
+                                            //echo $err;
                                             $this->errorLog($err);
                                         }
                                 
@@ -979,7 +987,7 @@ class Db
                         } catch (Exception $e) {
                             $info = 'В методе: ' . __METHOD__ . ' около строки: ' . __LINE__ . ' произошла ошибка API: ';
                             $err = $info . $e->getMessage();
-                            echo $err;
+                            //echo $err;
                             $this->errorLog($err);
                         }
                         //########################################################################
@@ -1033,7 +1041,7 @@ class Db
             catch(Exception $e){
                 $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                 $err = $info . $e->getMessage();
-                echo $err;
+                //echo $err;
                 $this->errorLog($err);
                 return false;
             }
@@ -1074,7 +1082,7 @@ class Db
             catch(Exception $e){
                 $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                 $err = $info . $e->getMessage();
-                echo $err;
+                //echo $err;
                 $this->errorLog($err);
                 return false;
             }
@@ -1309,7 +1317,7 @@ class Db
         catch(Exception $e){
             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
     
@@ -1457,7 +1465,7 @@ class Db
                catch(Exception $e){
                    $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                    $err = $info . $e->getMessage();
-                   echo $err;
+                   //echo $err;
                    $this->errorLog($err);
                }
                
@@ -1571,7 +1579,7 @@ class Db
             catch(Exception $e){
                 $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                 $err = $info . $e->getMessage();
-                echo $err;
+                //echo $err;
                 $this->errorLog($err);
             }
             
@@ -1594,7 +1602,7 @@ class Db
             catch(Exception $e){
                 $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                 $err = $info . $e->getMessage();
-                echo $err;
+                //echo $err;
                 $this->errorLog($err);
             }
             
@@ -1622,7 +1630,7 @@ class Db
             catch(Exception $e){
                 $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                 $err = $info . $e->getMessage();
-                echo $err;
+                //echo $err;
                 $this->errorLog($err);
             }
             
@@ -1641,7 +1649,7 @@ class Db
         catch(Exception $e){
             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
         
@@ -1682,7 +1690,7 @@ class Db
             catch(Exception $e){
                 $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                 $err = $info . $e->getMessage();
-                echo $err;
+                //echo $err;
                 $this->errorLog($err);
             }
             
@@ -1705,7 +1713,7 @@ class Db
        catch(Exception $e){
            $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
            $err = $info . $e->getMessage();
-           echo $err;
+           //echo $err;
            $this->errorLog($err);
        }
        
@@ -1723,7 +1731,7 @@ class Db
        catch(Exception $e){
            $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
            $err = $info . $e->getMessage();
-           echo $err;
+           //echo $err;
            $this->errorLog($err);
        }
        
@@ -1737,7 +1745,7 @@ class Db
        catch(Exception $e){
            $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
            $err = $info . $e->getMessage();
-           echo $err;
+           //echo $err;
            $this->errorLog($err);
        }
        
@@ -1755,7 +1763,7 @@ class Db
         catch(Exception $e){
             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
         
@@ -1770,7 +1778,7 @@ class Db
         catch(Exception $e){
             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
         
@@ -1786,7 +1794,7 @@ class Db
         catch(Exception $e){
             $info = 'В файле ' . __FILE__ . ' в методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
         
@@ -1801,7 +1809,7 @@ class Db
         catch(Exception $e){
             $info = 'В файле ' . __FILE__ . ' в методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
         
@@ -1903,7 +1911,7 @@ class Db
         catch(Exception $e){
             $info = 'В файле ' . __FILE__ . ' в методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
         
@@ -1951,7 +1959,7 @@ class Db
         catch(Exception $e){
             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
             $err = $info . $e->getMessage();
-            echo $err;
+            //echo $err;
             $this->errorLog($err);
         }
         
@@ -1972,7 +1980,7 @@ class Db
             catch(Exception $e){
                 $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
                 $err = $info . $e->getMessage();
-                echo $err;
+                //echo $err;
                 $this->errorLog($err);
             }
             
