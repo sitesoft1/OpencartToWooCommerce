@@ -917,8 +917,8 @@ class Db
                                             $woocommerce)
     {
         $c_attributes = $attributes;
-       
-        //if(isset($attributes[1])){
+        $this->log('count_data', count($attributes), false);
+        if(count($attributes)>1){
             foreach ($attributes as $attr_name => $attr_value) {
         
                 $attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$attr_name'", "attribute_id");
@@ -1007,9 +1007,9 @@ class Db
                 }
                 break;//Завершим цикл так как нужно прогнать только первуюопцию во избежание дуюблей
             }
-        //}
+        }
         //Если нет опций для взаимосвязи
-        /*
+        
         else{
             foreach ($attributes as $attr_name => $attr_value) {
                 $attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$attr_name'", "attribute_id");
@@ -1062,7 +1062,7 @@ class Db
                 }
             }
         }
-        */
+        
         
         
 //... try bilo
