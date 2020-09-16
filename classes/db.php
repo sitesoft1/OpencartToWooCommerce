@@ -1257,18 +1257,51 @@ class Db
             $attributes_variations_arr = $attributes_arr;
         }
        
+        //Формируем массив товара
+        $data = [];
+        if(isset($wc_product_name) and !empty($wc_product_name)){
+            $data['name'] = (string) $wc_product_name;
+        }
+        if(isset($type) and !empty($type)){
+            $data['type'] = $type;
+        }
+        if(isset($wc_price) and !empty($wc_price)){
+            $data['regular_price'] = (string) $wc_price;
+        }
+        if(isset($wc_product_description) and !empty($wc_product_description)){
+            $data['description'] = (string) $wc_product_description;
+        }
+        if(isset($wc_product_description) and !empty($wc_product_description)){
+            $data['short_description'] = (string) $wc_product_description;
+        }
+        if(isset($wc_model) and !empty($wc_model)){
+            $data['sku'] = (string) $wc_model.rand(1,10000);
+        }
+        if(isset($categories) and !empty($categories)){
+            $data['categories'] = $categories;
+        }
+        if(isset($wc_product_images) and !empty($wc_product_images)){
+            $data['images'] = $wc_product_images;
+        }
+        if(isset($attributes_variations_arr) and !empty($attributes_variations_arr)){
+            $data['attributes'] = $attributes_variations_arr;
+        }
+        //Формируем массив товара КОНЕЦ
         
+        /*
         $data = [
-            'name' => (string) $wc_product_name,
-            'type' => $type, //Product type. Options: simple, grouped, external and variable. Default is simple
-            'regular_price' => (string) $wc_price,
-            'description' => (string) $wc_product_description,
-            'short_description' => (string) $wc_product_description,
-            'sku' => (string) $wc_model.rand(1,10000), //Unique identifier.
-            'categories' => $categories,
-            'images' => $wc_product_images,
-            'attributes' => $attributes_variations_arr
+            //'name' => (string) $wc_product_name,
+            //'type' => $type, //Product type. Options: simple, grouped, external and variable. Default is simple
+            //'regular_price' => (string) $wc_price,
+            //'description' => (string) $wc_product_description,
+            //'short_description' => (string) $wc_product_description,
+            //'sku' => (string) $wc_model.rand(1,10000), //Unique identifier.
+            //'categories' => $categories,
+            //'images' => $wc_product_images,
+            //'attributes' => $attributes_variations_arr
         ];
+        */
+        
         
         try {
             $product_rezult = $woocommerce->post('products', $data);
