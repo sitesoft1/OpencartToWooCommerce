@@ -113,7 +113,6 @@ if(!empty($_POST)){
         $wc_attributes,
         $wc_variations,
         $wc_form_variations,
-        //$wc_product_options,
         $woocommerce);
     echo json_encode($rezult);
 }
