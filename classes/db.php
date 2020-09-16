@@ -919,12 +919,15 @@ class Db
         $c_attributes = $attributes;
        
         foreach ($attributes as $attr_name => $attr_value) {
+    
+           // $create = [];
             
             $attribute_id = $this->query_assoc("SELECT attribute_id FROM `wp_woocommerce_attribute_taxonomies` WHERE attribute_label='$attr_name'", "attribute_id");
             if (!empty($attribute_id) and !empty($attr_value)) {
                 
                     foreach ($attr_value as $attr_value_arr){
                         $attributes_group_arr = [];
+                        $create = [];
     
                         $value = $attr_value_arr['value'];
                         $price = $attr_value_arr['price'];
@@ -934,6 +937,8 @@ class Db
                             $option_price = $wc_price+$price;
                         }else if($price_prefix == '-'){
                             $option_price = $wc_price-$price;
+                        }else{
+                            $option_price = $wc_price;
                         }
     
                         $attributes_group_arr[] = [
@@ -950,10 +955,42 @@ class Db
                                         $c_price = $c_attr_value_arr['price'];
                                         $c_price_prefix = $c_attr_value_arr['price_prefix'];
     
-                                        $attributes_group_arr[] = [
+                                        
+                                        $attributes_group_arr1 = $attributes_group_arr;
+                                        $attributes_group_arr1[] = [
                                             'id' => (integer)$c_attribute_id,
                                             'option' => (string)$c_value
                                         ];
+    
+    
+                                        //create option
+                                        $create[] = [
+                                            'regular_price' => (string)$option_price,
+                                            'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
+                                            //'image' => [ 'src' => (string)$images[0] ],
+                                            'attributes' => $attributes_group_arr1
+                                        ];
+                                        //create option END
+    
+                                        //########################################################################
+    
+                                        $variations_data = [
+                                            'create' => $create
+                                        ];
+    
+                                        $this->log('variations_data', $variations_data, true);
+    
+                                        try {
+                                            $rezult = $woocommerce->post('products/' . $product_id . '/variations/batch', $variations_data);
+                                        } catch (Exception $e) {
+                                            $info = 'В методе: ' . __METHOD__ . ' около строки: ' . __LINE__ . ' произошла ошибка API: ';
+                                            $err = $info . $e->getMessage();
+                                            echo $err;
+                                            $this->errorLog($err);
+                                        }
+    
+                                        //########################################################################
+                                        
                                         
                                     }
                                 }
@@ -961,34 +998,15 @@ class Db
                         }
                         
                         
-                        //create option
-                        $create[] = [
-                            'regular_price' => (string)$option_price,
-                            'sku' => (string)$wc_model . '-' . rand(1, 10000), //Unique identifier.
-                            //'image' => [ 'src' => (string)$images[0] ],
-                            'attributes' => $attributes_group_arr
-                        ];
-                        //create option END
+                        //create bilo tut...
                     }
                     
             }
+            break;//Завершим цикл так как нужно прогнать только первуюопцию во избежание дуюблей
             
         }
         
-        $variations_data = [
-            'create' => $create
-        ];
-        
-        $this->log('variations_data',$variations_data);
-        
-        try {
-            $rezult = $woocommerce->post('products/' . $product_id . '/variations/batch', $variations_data);
-        } catch (Exception $e) {
-            $info = 'В методе: ' . __METHOD__ . ' около строки: ' . __LINE__ . ' произошла ошибка API: ';
-            $err = $info . $e->getMessage();
-            echo $err;
-            $this->errorLog($err);
-        }
+//... try bilo
         
         return $rezult;
     }
@@ -1309,9 +1327,14 @@ class Db
         
     }
     
-    public function log($filename, $data)
+    public function log($filename, $data, $append=false)
     {
-        file_put_contents(LOG_DIR.'/'.$filename.'.txt', print_r($data, true));
+        if($append){
+            file_put_contents(LOG_DIR.'/'.$filename.'.txt', print_r($data, true), FILE_APPEND);
+        }else{
+            file_put_contents(LOG_DIR.'/'.$filename.'.txt', print_r($data, true));
+        }
+        
     }
     
 //OCtoWC methods END ####################################################

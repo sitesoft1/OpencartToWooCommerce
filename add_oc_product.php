@@ -100,7 +100,7 @@ if(!empty($_POST)){
     }else{
         $wc_form_variations = [];
     }
-    $db->log('wc_form_variations', $wc_form_variations);
+    //$db->log('wc_form_variations', $wc_form_variations);
     
     
     $rezult = $db->addOcToWcProduct(
