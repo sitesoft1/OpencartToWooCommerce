@@ -843,7 +843,7 @@ class Db
                                             $woocommerce)
     {
         $c_attributes = $attributes;
-        $this->log('count_data', count($attributes), false);
+        //$this->log('count_data', count($attributes), false);
         if(count($attributes)>1){
             foreach ($attributes as $attr_name => $attr_value) {
         
@@ -999,7 +999,7 @@ class Db
     public function createSlug($name){
         $name = (string) $name;
         $slug = translit($name);
-        return $slug;
+        return (string) $slug;
     }
     
     public function checkAttributeName($attr_name)
