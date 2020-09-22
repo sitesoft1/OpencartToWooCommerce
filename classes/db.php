@@ -1987,6 +1987,40 @@ class Db
             
     }
     
+    public function updateDbPrice($product_id, $name, $price, $woocommerce)
+    {
+        $post_title = (string)$name;
+        
+        $id = $this->query_assoc("SELECT `product_id` FROM `wp_wc_product_meta_lookup` WHERE `sku`='$product_id'", "product_id");
+        if(!$id){
+            $id = $this->query_assoc("SELECT `ID` FROM `wp_posts` WHERE `post_type`='product' AND post_title='$post_title'", "ID");
+        }
+        if(!$id){
+            $id = $this->query_assoc("SELECT `post_id` FROM `wp_postmeta` WHERE `meta_key`='_sku' AND meta_value='$product_id'", "post_id");
+        }
+    
+        if($id){
+    
+            //$this->updateProductPrice($id, $price, $woocommerce);
+            
+           // $rez1 = $this->query_update("UPDATE wp_wc_product_meta_lookup SET min_price='$price' WHERE `product_id`='$id'");
+            //$rez2 = $this->query_update("UPDATE wp_wc_product_meta_lookup SET max_price='$price' WHERE `product_id`='$id'");
+            $rez3 = $this->query_update("UPDATE wp_postmeta SET meta_value='$price' WHERE `post_id`='$id' AND meta_key='_regular_price'");
+            $rez4 = $this->query_update("UPDATE wp_postmeta SET meta_value='$price' WHERE `post_id`='$id' AND meta_key='_price'");
+            if($rez3 and $rez4){
+                $this->log('prices_update_log', 'id - '.$id.'=price - '.$price.PHP_EOL, true);
+                return 'id - '.$id.'=price - '.$price;
+            }
+        }else{
+            $this->log('prices_update_feil_log', 'товар - '.$product_id.'=под названием - '.$name.' не обновлен!'.PHP_EOL, true);
+            return 'товар - '.$product_id.'=под названием - '.$name.' не обновлен!';
+        }
+        
+        
+        
+        
+    }
+    
     
     
     
