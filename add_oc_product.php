@@ -108,6 +108,12 @@ if(!empty($_POST)){
     }else{
         $wc_form_variations = [];
     }
+    
+    if(isset($_POST['wc_option_add_to_dish'])){
+        $wc_option_add_to_dish = $_POST['wc_option_add_to_dish'];
+    }else{
+        $wc_option_add_to_dish = false;
+    }
     //$db->log('wc_form_variations', $wc_form_variations);
     
     
@@ -121,6 +127,7 @@ if(!empty($_POST)){
         $wc_attributes,
         $wc_variations,
         $wc_form_variations,
+        $wc_option_add_to_dish,
         $woocommerce);
     echo json_encode($rezult);
 }

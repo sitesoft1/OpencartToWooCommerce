@@ -32,7 +32,8 @@ class Db
         //DB CONNECT
         $this->db = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
         if ($this->db->connect_errno) {
-            echo "Не удалось подключиться к MySQL: (" . $this->db->connect_errno . ") " . $this->db->connect_error;
+            $err = "Не удалось подключиться к MySQL: (" . $this->db->connect_errno . ") " . $this->db->connect_error;
+            $this->log('construct_log', $err, true);
         }else{
            // echo "Подключение к базе прошло успешно!";
         }
@@ -47,16 +48,20 @@ class Db
     {
         
         if (!$result = $this->db->query($sql)) {
-            echo "Не удалось выполнить запрос: $sql <br>";
-            echo "Номер ошибки: " . $this->db->errno . "\n";
-            echo "Ошибка: " . $this->db->error . "\n";
+            $err = "Не удалось выполнить запрос: $sql <br>";
+            $err .= "Номер ошибки: " . $this->db->errno . "\n";
+            $err .= "Ошибка: " . $this->db->error . "\n";
+            //$this->log('query_log', $err, true);
+            
             return false;
         }
         
         if ($result->num_rows > 0) {
             return $result;
         } else {
-            echo "Функция query по данным: <br> $sql <br> - mysql вернула пустой результат! <br><hr>";
+            $err = "Функция query по данным: <br> $sql <br> - mysql вернула пустой результат! <br><hr>";
+            //$this->log('query_log', $err, true);
+            
             return false;
         }
         
@@ -66,9 +71,11 @@ class Db
     {
         
         if (!$result = $this->db->query($sql)) {
-            echo "Не удалось выполнить запрос: $sql <br>";
-            echo "Номер ошибки: " . $this->db->errno . "\n";
-            echo "Ошибка: " . $this->db->error . "\n";
+            $err = "Не удалось выполнить запрос: $sql <br>";
+            $err .= "Номер ошибки: " . $this->db->errno . "\n";
+            $err .= "Ошибка: " . $this->db->error . "\n";
+            //$this->log('query_assoc_log', $err, true);
+            
             return false;
         }
         
@@ -76,7 +83,9 @@ class Db
             $row = mysqli_fetch_assoc($result);
             return $row[$row_filed];
         } else {
-            //echo "Функция query_assoc по данным: <br> $sql <br> $row_filed <br> - mysql вернула пустой результат! <br><hr>";
+            $err = "Функция query_assoc по данным: <br> $sql <br> $row_filed <br> - mysql вернула пустой результат! <br><hr>";
+            //$this->log('query_assoc_log', $err, true);
+            
             return false;
         }
         
@@ -85,12 +94,16 @@ class Db
     public function query_insert($sql)
     {
         if (!$result = $this->db->query($sql)) {
-            echo "Не удалось выполнить запрос: (" . $this->db->errno . ") " . $this->db->error;
-            echo "Номер ошибки: " . $this->db->errno . "\n";
-            echo "Ошибка: " . $this->db->error . "\n";
+            $err = "Не удалось выполнить запрос: (" . $this->db->errno . ") " . $this->db->error;
+            $err .= "Номер ошибки: " . $this->db->errno . "\n";
+            $err .= "Ошибка: " . $this->db->error . "\n";
+            //$this->log('query_insert_log', $err, true);
+            
             return false;
         }else{
-            echo "Запрос <br> $sql <br> - выполнен удачно! <br><hr>";
+            $err = "Запрос <br> $sql <br> - выполнен удачно! <br><hr>";
+            //$this->log('query_insert_log', $err, true);
+            
             return true;
         }
     
@@ -99,12 +112,16 @@ class Db
     function query_insert_id($sql)
     {
         if (!$result = $this->db->query($sql)) {
-            echo "Не удалось выполнить запрос: (" . $this->db->errno . ") " . $this->db->error;
-            echo "Номер ошибки: " . $this->db->errno . "\n";
-            echo "Ошибка: " . $this->db->error . "\n";
+            $err = "Не удалось выполнить запрос: (" . $this->db->errno . ") " . $this->db->error;
+            $err .= "Номер ошибки: " . $this->db->errno . "\n";
+            $err .= "Ошибка: " . $this->db->error . "\n";
+            //$this->log('query_insert_id_log', $err, true);
+            
             return false;
         }else{
-            echo "Запрос <br> $sql <br> - выполнен удачно! <br><hr>";
+            $err = "Запрос <br> $sql <br> - выполнен удачно! <br><hr>";
+            //$this->log('query_insert_id_log', $err, true);
+            
             return $this->db->insert_id;
             //return mysqli_insert_id($this->db);
         }
@@ -114,12 +131,16 @@ class Db
     public function query_update($sql)
     {
         if (!$result = $this->db->query($sql)) {
-            echo "Не удалось выполнить запрос: (" . $this->db->errno . ") " . $this->db->error;
-            echo "Номер ошибки: " . $this->db->errno . "\n";
-            echo "Ошибка: " . $this->db->error . "\n";
+            $err = "Не удалось выполнить запрос: (" . $this->db->errno . ") " . $this->db->error;
+            $err .= "Номер ошибки: " . $this->db->errno . "\n";
+            $err .= "Ошибка: " . $this->db->error . "\n";
+            //$this->log('query_update_log', $err, true);
+            
             return false;
         }else{
-            echo "Запрос <br> $sql <br> - выполнен удачно! <br><hr>";
+            $err = "Запрос <br> $sql <br> - выполнен удачно! <br><hr>";
+            //$this->log('query_update_log', $err, true);
+            
             return true;
         }
         
@@ -128,12 +149,16 @@ class Db
     public function query_delete($sql)
     {
         if (!$result = $this->db->query($sql)) {
-            echo "Не удалось выполнить запрос: (" . $this->db->errno . ") " . $this->db->error;
-            echo "Номер ошибки: " . $this->db->errno . "\n";
-            echo "Ошибка: " . $this->db->error . "\n";
+            $err = "Не удалось выполнить запрос: (" . $this->db->errno . ") " . $this->db->error;
+            $err .= "Номер ошибки: " . $this->db->errno . "\n";
+            $err .= "Ошибка: " . $this->db->error . "\n";
+            //$this->log('query_delete_log', $err, true);
+            
             return false;
         }else{
-            echo "Запрос <br> $sql <br> - выполнен удачно! <br><hr>";
+            $err = "Запрос <br> $sql <br> - выполнен удачно! <br><hr>";
+            //$this->log('query_delete_log', $err, true);
+            
             return true;
         }
         
@@ -1222,6 +1247,7 @@ class Db
         $wc_attributes,
         $wc_variations,
         $wc_form_variations,
+        $wc_option_add_to_dish,
         $woocommerce)
     {
         $wc_product_images = $this->formImages($wc_product_images);
@@ -1335,11 +1361,17 @@ class Db
                     $woocommerce);
             }
             //добавим товару вариации КОНЕЦ
-            
             //Зададим выбранные атребуты по умолчанию ДОРАБОТАТЬ
             //$this->addProductDefaultAttributes($product_id, $woocommerce);//пока не надо
             
-            
+            //Зададим "добавить к блюду" если это необходимо
+            if($wc_option_add_to_dish){
+                if(in_array(43, $wc_categories)){// 43 - категория пиццы
+                    $this->query_insert("INSERT INTO `wp_postmeta` (post_id, meta_key, meta_value) VALUES ('$product_id', '_product_meta_id', '1')");
+                }else{
+                    $this->query_insert("INSERT INTO `wp_postmeta` (post_id, meta_key, meta_value) VALUES ('$product_id', '_product_meta_id', '2')");
+                }
+            }
             
             return $product_id;
         }else{
