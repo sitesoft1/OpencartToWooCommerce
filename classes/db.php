@@ -1464,6 +1464,17 @@ class Db
         }
         //добавим товару вариации КОНЕЦ
         
+        //Добавить к блюду
+        $this->query_delete("DELETE FROM `wp_postmeta` WHERE post_id='$wc_product_id' AND meta_key='_product_meta_id'");
+        if($wc_option_add_to_dish){
+            if(in_array(43, $wc_categories)){// 43 - категория пиццы
+                $this->query_insert("INSERT INTO `wp_postmeta` (post_id, meta_key, meta_value) VALUES ('$wc_product_id', '_product_meta_id', '1')");
+            }else{
+                $this->query_insert("INSERT INTO `wp_postmeta` (post_id, meta_key, meta_value) VALUES ('$wc_product_id', '_product_meta_id', '2')");
+            }
+        }
+        //Добавить к блюду КОНЕЦ
+        
         return $product_rezult;
     }
     
