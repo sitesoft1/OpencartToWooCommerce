@@ -42,28 +42,6 @@ $woocommerce = new Client(
     ]
 );
 //WooCommerce API CLIENT END
-$product_id = '';
-/*
-$product = $db->getProduct('7803', $woocommerce);
-dump($product);
-$attributes = $product->attributes;
-dump($attributes);
-*/
-/*
-$db->addOcToWcProductDefaultAttributes($product_id, $woocommerce);
-$product = $db->getProduct($product_id, $woocommerce);
-dump($product);
-*/
-$attributes = [
-    'Размер' => ['Большая (50 см)', 'Маленькая (32 см)']
-];
+$product_id = '8685';
 
-$attributes2 = [
-    'Кол-во' => ['1 шт', '24 шт'],
-    'Острота' => ['Средняя', 'Острая', 'Чили'],
-];
-
-$rez = array_merge($attributes1, $attributes2);
-dump($rez);
-//$db->checkAddOcToWcAtributes($attributes, $woocommerce);
-
+$db->deleteProductVariations($product_id, $woocommerce);

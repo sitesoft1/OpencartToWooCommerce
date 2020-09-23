@@ -1238,6 +1238,127 @@ class Db
     }
     
     public function addOcToWcProduct(
+    $wc_product_name,
+    $wc_price,
+    $wc_model,
+    $wc_product_description,
+    $wc_product_images,
+    $wc_categories,
+    $wc_attributes,
+    $wc_variations,
+    $wc_form_variations,
+    $wc_option_add_to_dish,
+    $woocommerce)
+{
+    $wc_product_images = $this->formImages($wc_product_images);
+    $categories = $this->formOcToWcCategories($wc_categories);
+    
+    $type = 'simple';
+    if(!empty($wc_form_variations)){
+        $type = 'variable';
+    }
+    
+    //добавим атребуты и их значения в wordpress
+    //if(!empty($wc_variations) and !empty($wc_attributes)){
+    $attributes = array_merge($wc_variations, $wc_attributes);
+    // }
+    
+    if(!empty($attributes)){
+        $this->checkAddOcToWcAtributes($attributes, $woocommerce);
+    }
+    
+    //Сформируем массив атрибутов для товара
+    if(!empty($wc_variations)){
+        $variations_arr = $this->formOcToWcAttributes($wc_variations, true);
+    }
+    if(!empty($wc_attributes)){
+        $attributes_arr = $this->formOcToWcAttributes($wc_attributes, false);
+    }
+    
+    
+    if(!empty($variations_arr) and !empty($attributes_arr)){
+        $attributes_variations_arr = array_merge($variations_arr,  $attributes_arr);
+    }else if(!empty($variations_arr)){
+        $attributes_variations_arr = $variations_arr;
+    }else if(!empty($attributes_arr)){
+        $attributes_variations_arr = $attributes_arr;
+    }
+    
+    //Формируем массив товара
+    $data = [];
+    if(isset($wc_product_name) and !empty($wc_product_name)){
+        $data['name'] = (string) $wc_product_name;
+    }
+    if(isset($type) and !empty($type)){
+        $data['type'] = $type;
+    }
+    if(isset($wc_price) and !empty($wc_price)){
+        $data['regular_price'] = (string) $wc_price;
+    }
+    if(isset($wc_product_description) and !empty($wc_product_description)){
+        $data['description'] = (string) $wc_product_description;
+    }
+    if(isset($wc_product_description) and !empty($wc_product_description)){
+        $data['short_description'] = (string) $wc_product_description;
+    }
+    if(isset($wc_model) and !empty($wc_model)){
+        $data['sku'] = (string) $wc_model.rand(1,10000);
+    }
+    if(isset($categories) and !empty($categories)){
+        $data['categories'] = $categories;
+    }
+    if(isset($wc_product_images) and !empty($wc_product_images)){
+        $data['images'] = $wc_product_images;
+    }
+    if(isset($attributes_variations_arr) and !empty($attributes_variations_arr)){
+        $data['attributes'] = $attributes_variations_arr;
+    }
+    //Формируем массив товара КОНЕЦ
+    
+    try {
+        $product_rezult = $woocommerce->post('products', $data);
+    }
+    catch(Exception $e){
+        $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
+        $err = $info . $e->getMessage();
+        //echo $err;
+        $this->errorLog($err);
+    }
+    
+    $product_id = $product_rezult->id;
+    if($product_id){
+        
+        //добавим товару вариации
+        if(!empty($wc_form_variations)){
+            $this->formAddOcToWcVariations($product_id,
+                $wc_model,
+                $wc_price,
+                $wc_form_variations,
+                //$images,
+                $woocommerce);
+        }
+        //добавим товару вариации КОНЕЦ
+        //Зададим выбранные атребуты по умолчанию ДОРАБОТАТЬ
+        //$this->addProductDefaultAttributes($product_id, $woocommerce);//пока не надо
+        
+        //Зададим "добавить к блюду" если это необходимо
+        if($wc_option_add_to_dish){
+            if(in_array(43, $wc_categories)){// 43 - категория пиццы
+                $this->query_insert("INSERT INTO `wp_postmeta` (post_id, meta_key, meta_value) VALUES ('$product_id', '_product_meta_id', '1')");
+            }else{
+                $this->query_insert("INSERT INTO `wp_postmeta` (post_id, meta_key, meta_value) VALUES ('$product_id', '_product_meta_id', '2')");
+            }
+        }
+        
+        return $product_id;
+    }else{
+        return false;
+    }
+    
+}
+    
+    public function updateOcToWcProduct(
+        $wc_product_id,
         $wc_product_name,
         $wc_price,
         $wc_model,
@@ -1252,28 +1373,22 @@ class Db
     {
         $wc_product_images = $this->formImages($wc_product_images);
         $categories = $this->formOcToWcCategories($wc_categories);
-       
+        
         $type = 'simple';
+        
+        //Закоментим опции и атребуты пока...
+        
         if(!empty($wc_form_variations)){
+            $this->deleteProductVariations($wc_product_id, $woocommerce);
             $type = 'variable';
         }
         
-        
-        /*
-        $wc_variations = [
-            'Размер' => ['Большая (50 см)', 'Маленькая (32 см)'],
-            'Бортик' => ['Тонкий', 'Пышный']
-        ];
-        */
-        
-        //добавим атребуты и их значения в wordpress
-        //if(!empty($wc_variations) and !empty($wc_attributes)){
-            $attributes = array_merge($wc_variations, $wc_attributes);
-       // }
+        $attributes = array_merge($wc_variations, $wc_attributes);
         
         if(!empty($attributes)){
             $this->checkAddOcToWcAtributes($attributes, $woocommerce);
         }
+        
         
         //Сформируем массив атрибутов для товара
         if(!empty($wc_variations)){
@@ -1291,7 +1406,9 @@ class Db
         }else if(!empty($attributes_arr)){
             $attributes_variations_arr = $attributes_arr;
         }
-       
+        
+        //Закоментим опции и атребуты пока... КОНЕЦ
+        
         //Формируем массив товара
         $data = [];
         if(isset($wc_product_name) and !empty($wc_product_name)){
@@ -1323,61 +1440,31 @@ class Db
         }
         //Формируем массив товара КОНЕЦ
         
-        /*
-        $data = [
-            //'name' => (string) $wc_product_name,
-            //'type' => $type, //Product type. Options: simple, grouped, external and variable. Default is simple
-            //'regular_price' => (string) $wc_price,
-            //'description' => (string) $wc_product_description,
-            //'short_description' => (string) $wc_product_description,
-            //'sku' => (string) $wc_model.rand(1,10000), //Unique identifier.
-            //'categories' => $categories,
-            //'images' => $wc_product_images,
-            //'attributes' => $attributes_variations_arr
-        ];
-        */
-        
-        
         try {
-            $product_rezult = $woocommerce->post('products', $data);
+            $product_rezult = $woocommerce->put('products/'.$wc_product_id, $data);
+            //$this->log('updateOcToWcProduct_log', $product_rezult, false);
+            
         }
         catch(Exception $e){
             $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
             $err = $info . $e->getMessage();
             //echo $err;
             $this->errorLog($err);
-        }
-    
-        $product_id = $product_rezult->id;
-        if($product_id){
-            
-            //добавим товару вариации
-            if(!empty($wc_form_variations)){
-                $this->formAddOcToWcVariations($product_id,
-                    $wc_model,
-                    $wc_price,
-                    $wc_form_variations,
-                    //$images,
-                    $woocommerce);
-            }
-            //добавим товару вариации КОНЕЦ
-            //Зададим выбранные атребуты по умолчанию ДОРАБОТАТЬ
-            //$this->addProductDefaultAttributes($product_id, $woocommerce);//пока не надо
-            
-            //Зададим "добавить к блюду" если это необходимо
-            if($wc_option_add_to_dish){
-                if(in_array(43, $wc_categories)){// 43 - категория пиццы
-                    $this->query_insert("INSERT INTO `wp_postmeta` (post_id, meta_key, meta_value) VALUES ('$product_id', '_product_meta_id', '1')");
-                }else{
-                    $this->query_insert("INSERT INTO `wp_postmeta` (post_id, meta_key, meta_value) VALUES ('$product_id', '_product_meta_id', '2')");
-                }
-            }
-            
-            return $product_id;
-        }else{
             return false;
         }
+    
+        //добавим товару вариации
+        if(!empty($wc_form_variations)){
+            $this->formAddOcToWcVariations($wc_product_id,
+                $wc_model,
+                $wc_price,
+                $wc_form_variations,
+                //$images,
+                $woocommerce);
+        }
+        //добавим товару вариации КОНЕЦ
         
+        return $product_rezult;
     }
     
     public function log($filename, $data, $append=false)
@@ -1741,7 +1828,7 @@ class Db
    {
     
        try {
-           dump($woocommerce->delete('products/'.$product_id.'/variations/'.$variation_id, ['force' => true]));
+          $woocommerce->delete('products/'.$product_id.'/variations/'.$variation_id, ['force' => true]);
        }
        catch(Exception $e){
            $info = 'В методе: ' . __METHOD__ . ' около строки: ' .  __LINE__ . ' произошла ошибка API: ';
@@ -1751,6 +1838,16 @@ class Db
        }
        
    }
+    
+    public function deleteProductVariations($product_id, $woocommerce)
+    {
+        $variations = $this->getProductVariations($product_id, $woocommerce);
+        if(!empty($variations)){
+            foreach ($variations as $variation){
+                $this->deleteProductVariation($product_id, $variation->id, $woocommerce);
+            }
+        }
+    }
    
    public function updateProductVariationPrice($product_id, $variation_id, $offer_price, $woocommerce)
    {
