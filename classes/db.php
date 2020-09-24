@@ -404,11 +404,6 @@ class Db
             $images_arr[] = [ 'src' => 'https://sushiboss.od.ua/image/wc-600x600.png'  ];
         }
         
-        
-        //pauza dla sborki musora
-        //time_nanosleep(0, 10000000);
-        //pauza dla sborki musora
-        
         return $images_arr;
     }
     
