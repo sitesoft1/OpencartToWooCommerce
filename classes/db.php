@@ -393,12 +393,7 @@ class Db
         $images_arr = [];
         if(!empty($images)){
             foreach ($images as $src){
-                $Headers = @get_headers($src);
-                if(strpos('200', $Headers[0])) {
-                    $images_arr[] = [ 'src' => (string) $src ];
-                } else {
-                    $images_arr[] = [ 'src' => 'https://sushiboss.od.ua/image/wc-600x600.png'  ];
-                }
+                $images_arr[] = [ 'src' => (string) $src ];
             }
         }else{
             $images_arr[] = [ 'src' => 'https://sushiboss.od.ua/image/wc-600x600.png'  ];
