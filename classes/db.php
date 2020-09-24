@@ -388,12 +388,32 @@ class Db
         return $categories;
     }
     
+    public function getCurlHeader($url)
+    {
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => $url,
+            CURLOPT_HEADER => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_NOBODY => true));
+    
+        $header = explode("\n", curl_exec($curl));
+        curl_close($curl);
+    
+        return $header;
+    }
+    
     public function formImages($images)
     {
         $images_arr = [];
         if(!empty($images)){
             foreach ($images as $src){
-                $images_arr[] = [ 'src' => (string) $src ];
+                $header = $this->getCurlHeader($src);
+                if(strpos('200', $header[0])) {
+                    $images_arr[] = [ 'src' => (string) $src ];
+                } else {
+                    $images_arr[] = [ 'src' => 'https://sushiboss.od.ua/image/wc-600x600.png'  ];
+                }
             }
         }else{
             $images_arr[] = [ 'src' => 'https://sushiboss.od.ua/image/wc-600x600.png'  ];
