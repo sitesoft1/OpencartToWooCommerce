@@ -1453,7 +1453,7 @@ class Db
             return false;
         }
     
-        //добавим товару вариации
+        //добавим товару вариации.
         if(!empty($wc_form_variations)){
             $this->formAddOcToWcVariations($wc_product_id,
                 $wc_model,
