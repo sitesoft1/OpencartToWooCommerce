@@ -409,7 +409,7 @@ class Db
         if(!empty($images)){
             foreach ($images as $src){
                 $header = $this->getCurlHeader($src);
-                if(strpos('200', $header[0])) {
+                if(strpos($header[0], '200') !== false) {
                     $images_arr[] = [ 'src' => (string) $src ];
                 } else {
                     $images_arr[] = [ 'src' => 'https://sushiboss.od.ua/image/wc-600x600.png'  ];
@@ -1317,7 +1317,7 @@ class Db
         $data['short_description'] = (string) $wc_product_description;
     }
     if(isset($wc_model) and !empty($wc_model)){
-        $data['sku'] = (string) $wc_model.rand(1,10000);
+        $data['sku'] = (string) $wc_model.'-'.rand(1,100).'-'.rand(1,100000);
     }
     if(isset($categories) and !empty($categories)){
         $data['categories'] = $categories;
@@ -1442,7 +1442,7 @@ class Db
             $data['short_description'] = (string) $wc_product_description;
         }
         if(isset($wc_model) and !empty($wc_model)){
-            $data['sku'] = (string) $wc_model.rand(1,10000);
+            $data['sku'] = (string) $wc_model.'-'.rand(1,100).'-'.rand(1,100000);
         }
         if(isset($categories) and !empty($categories)){
             $data['categories'] = $categories;

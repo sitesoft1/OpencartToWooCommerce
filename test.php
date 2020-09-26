@@ -43,5 +43,9 @@ $woocommerce = new Client(
 );
 //WooCommerce API CLIENT END
 $product_id = '8685';
+$url = 'https://test.sushiboss.com.ua/image/cache/catalog/p-dom-1000x1000.png';
+$header = $db->getCurlHeader($url);
+dump($header);
 
-$db->deleteProductVariations($product_id, $woocommerce);
+$rez = strpos($header[0], '200');
+dump($rez);
