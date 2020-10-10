@@ -1,0 +1,2 @@
+14-31-02 В методе: Db::addOcToWcProduct около строки: 1337 произошла ошибка API: cURL Error: SSL: no alternative certificate subject name matches target host name 'test.sushisetboss.com'
+14-38-49 В методе: Db::addOcToWcProduct около строки: 1337 произошла ошибка API: cURL Error: SSL: no alternative certificate subject name matches target host name 'test.sushisetboss.com'
