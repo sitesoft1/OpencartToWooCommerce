@@ -1255,6 +1255,7 @@ class Db
     public function addOcToWcProduct(
     $wc_product_name,
     $wc_price,
+	$wc_special_price,
     $wc_model,
     $wc_product_description,
     $wc_product_images,
@@ -1263,10 +1264,14 @@ class Db
     $wc_variations,
     $wc_form_variations,
     $wc_option_add_to_dish,
+    $status,
     $woocommerce)
 {
     $wc_product_images = $this->formImages($wc_product_images);
     $categories = $this->formOcToWcCategories($wc_categories);
+    
+    //$status = 'draft';
+    //$status = 'publish';
     
     $type = 'simple';
     if(!empty($wc_form_variations)){
@@ -1307,9 +1312,15 @@ class Db
     if(isset($type) and !empty($type)){
         $data['type'] = $type;
     }
+	
     if(isset($wc_price) and !empty($wc_price)){
         $data['regular_price'] = (string) $wc_price;
     }
+	
+	if(isset($wc_special_price) and !empty($wc_special_price)){
+        $data['sale_price'] = (string) $wc_special_price;
+    }
+	
     if(isset($wc_product_description) and !empty($wc_product_description)){
         $data['description'] = (string) $wc_product_description;
     }
@@ -1327,6 +1338,9 @@ class Db
     }
     if(isset($attributes_variations_arr) and !empty($attributes_variations_arr)){
         $data['attributes'] = $attributes_variations_arr;
+    }
+    if(isset($status) and !empty($status)){
+        $data['status'] = $status;
     }
     //Формируем массив товара КОНЕЦ
     
@@ -1376,6 +1390,7 @@ class Db
         $wc_product_id,
         $wc_product_name,
         $wc_price,
+		$wc_special_price,
         $wc_model,
         $wc_product_description,
         $wc_product_images,
@@ -1384,6 +1399,7 @@ class Db
         $wc_variations,
         $wc_form_variations,
         $wc_option_add_to_dish,
+        $status,
         $woocommerce)
     {
         $wc_product_images = $this->formImages($wc_product_images);
@@ -1435,6 +1451,9 @@ class Db
         if(isset($wc_price) and !empty($wc_price)){
             $data['regular_price'] = (string) $wc_price;
         }
+		if(isset($wc_special_price) and !empty($wc_special_price)){
+			$data['sale_price'] = (string) $wc_special_price;
+		}
         if(isset($wc_product_description) and !empty($wc_product_description)){
             $data['description'] = (string) $wc_product_description;
         }
@@ -1453,7 +1472,10 @@ class Db
         if(isset($attributes_variations_arr) and !empty($attributes_variations_arr)){
             $data['attributes'] = $attributes_variations_arr;
         }
-        //Формируем массив товара КОНЕЦ
+        if(isset($status) and !empty($status)){
+            $data['status'] = $status;
+        }
+        //Формируем массив товара КОНЕЦ.
         
         try {
             $product_rezult = $woocommerce->put('products/'.$wc_product_id, $data);

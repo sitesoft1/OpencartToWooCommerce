@@ -17,16 +17,16 @@ ini_set('display_startup_errors', 1);
 //ini_set('pm.max_requests', 0);
 
 //My classes
-require_once __DIR__ . '/classes/db.php';
-require_once __DIR__ . '/classes/xml.php';
-require_once __DIR__ . '/functions.php';
-require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/_oc_import/classes/db.php';
+require_once __DIR__ . '/_oc_import/classes/xml.php';
+require_once __DIR__ . '/_oc_import/functions.php';
+require_once __DIR__ . '/_oc_import/config.php';
 //My classes END
 //Перехват завершения скрипта
 //register_shutdown_function('shutdown');
 
 //Composer
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/_oc_import/vendor/autoload.php';
 use Automattic\WooCommerce\Client;
 //Composer END
 
@@ -65,6 +65,13 @@ if(!empty($_POST)){
     }else{
         $wc_price = '';
     }
+	
+	if(!empty($_POST['wc_special_price'])){
+        $wc_special_price = $_POST['wc_special_price'];
+    }else{
+        $wc_special_price = '';
+    }
+	//$db->log('wc_special_price', $wc_special_price);
     
     if(!empty($_POST['wc_product_description'])){
         $wc_product_description = $_POST['wc_product_description'];
@@ -114,12 +121,19 @@ if(!empty($_POST)){
     }else{
         $wc_option_add_to_dish = false;
     }
+    
+    if(isset($_POST['status'])){
+        $status = $_POST['status'];
+    }else{
+        $status = 'publish';
+    }
     //$db->log('wc_form_variations', $wc_form_variations);
     
     
     $rezult = $db->addOcToWcProduct(
         $wc_product_name,
         $wc_price,
+		$wc_special_price,
         $wc_model,
         $wc_product_description,
         $wc_product_images,
@@ -128,6 +142,7 @@ if(!empty($_POST)){
         $wc_variations,
         $wc_form_variations,
         $wc_option_add_to_dish,
+        $status,
         $woocommerce);
     echo json_encode($rezult);
 }
